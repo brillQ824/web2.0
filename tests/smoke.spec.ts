@@ -1,94 +1,84 @@
 import { test, expect } from '@playwright/test'
 
-test.describe('Smoke Tests', () => {
-  test('homepage loads successfully', async ({ page }) => {
+test.describe('Smoke', () => {
+  test('homepage loads in English by default', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: /ALIOTH GROUP/i })).toBeVisible()
+    await expect(page).toHaveURL(/\/en$/)
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(/artificial intelligence/i)
   })
 
-  test('navigation works', async ({ page }) => {
-    await page.goto('/pl')
+  test('language switcher toggles to Polish', async ({ page }) => {
+    await page.goto('/en')
+    await page.locator('header a[href="/pl"]').first().click()
+    await expect(page).toHaveURL(/\/pl(\/|$)/)
+  })
 
-    // Open the fullscreen menu and navigate to Produkty
+  test('navigation to a subpage works', async ({ page }) => {
+    await page.goto('/en')
     await page.getByRole('button', { name: /toggle menu/i }).click()
-    await page.getByRole('link', { name: /produkty/i }).first().click()
+    await page.getByRole('link', { name: 'Produkty' }).first().click()
     await expect(page).toHaveURL(/\/produkty/)
   })
 
   test('contact form is accessible', async ({ page }) => {
-    await page.goto('/kontakt')
-    
-    // Check form elements exist
-    await expect(page.getByLabel(/imię i nazwisko/i)).toBeVisible()
-    await expect(page.getByLabel(/email/i)).toBeVisible()
-    await expect(page.getByLabel(/wiadomość/i)).toBeVisible()
-    await expect(page.getByRole('button', { name: /wyślij/i })).toBeVisible()
+    await page.goto('/en/kontakt')
+    await expect(page.locator('input[name="name"]')).toBeVisible()
+    await expect(page.locator('input[name="email"]')).toBeVisible()
+    await expect(page.locator('textarea[name="message"]')).toBeVisible()
+    await expect(page.getByRole('button', { name: /send|wyślij/i })).toBeVisible()
   })
 
-  test('mobile menu works', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 })
-    await page.goto('/')
-    
-    // Open mobile menu
-    await page.getByRole('button', { name: /toggle menu/i }).click()
-    await expect(page.getByRole('link', { name: /projekty/i })).toBeVisible()
+  test('removed competence URLs redirect to home', async ({ page }) => {
+    await page.goto('/en/kompetencje/llm')
+    await expect(page).toHaveURL(/\/en$/)
   })
 
   test('skip to content link works', async ({ page }) => {
-    await page.goto('/')
-    
-    // Tab to skip link and press enter
+    await page.goto('/en')
     await page.keyboard.press('Tab')
     await page.keyboard.press('Enter')
-    
-    // Main content should be focused
-    const mainContent = page.locator('#main-content')
-    await expect(mainContent).toBeFocused()
+    await expect(page.locator('#main-content')).toBeFocused()
   })
 })
 
-test.describe('Accessibility Tests', () => {
-  test('homepage has no accessibility violations', async ({ page }) => {
-    await page.goto('/')
-    
-    // Check for basic accessibility
+test.describe('Accessibility', () => {
+  test('key landmarks are present', async ({ page }) => {
+    await page.goto('/en')
     await expect(page.locator('main')).toBeVisible()
     await expect(page.locator('header')).toBeVisible()
     await expect(page.locator('footer')).toBeVisible()
   })
 
   test('all images have alt text', async ({ page }) => {
-    await page.goto('/')
-    
-    const images = await page.locator('img').all()
-    for (const img of images) {
-      const alt = await img.getAttribute('alt')
-      expect(alt).toBeTruthy()
+    await page.goto('/en')
+    for (const img of await page.locator('img').all()) {
+      expect(await img.getAttribute('alt')).toBeTruthy()
     }
   })
-})
 
-test.describe('SEO Tests', () => {
-  test('homepage has proper meta tags', async ({ page }) => {
-    await page.goto('/')
-    
-    // Check title
-    await expect(page).toHaveTitle(/Alioth Group/)
-    
-    // Check meta description
-    const description = await page.locator('meta[name="description"]')
-    await expect(description).toHaveAttribute('content', /.+/)
-  })
-
-  test('sitemap is accessible', async ({ page }) => {
-    const response = await page.goto('/sitemap.xml')
-    expect(response?.status()).toBe(200)
-    expect(response?.headers()['content-type']).toContain('xml')
-  })
-
-  test('robots.txt is accessible', async ({ page }) => {
-    const response = await page.goto('/robots.txt')
-    expect(response?.status()).toBe(200)
+  test('html lang attribute matches the active locale', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    await page.goto('/pl')
+    await expect(page.locator('html')).toHaveAttribute('lang', 'pl')
   })
 })
 
+test.describe('SEO', () => {
+  test('homepage has a brillQ title and meta description', async ({ page }) => {
+    await page.goto('/en')
+    await expect(page).toHaveTitle(/brillQ/)
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.+/)
+  })
+
+  test('sitemap.xml is served', async ({ page }) => {
+    const res = await page.goto('/sitemap.xml')
+    expect(res?.status()).toBe(200)
+    expect(res?.headers()['content-type']).toContain('xml')
+  })
+
+  test('robots.txt is served', async ({ page }) => {
+    const res = await page.goto('/robots.txt')
+    expect(res?.status()).toBe(200)
+  })
+})

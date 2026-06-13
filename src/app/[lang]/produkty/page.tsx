@@ -5,6 +5,7 @@ import type { Locale } from '@/i18n/config'
 import AnimatedSection from '@/components/shared/AnimatedSection'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 // Typy produktów
 type ProductType = 'training' | 'book'
@@ -1767,12 +1768,12 @@ export default function ProduktyPage({ params }: { params: { lang: Locale } }) {
                     {/* Book Cover Image */}
                     <div className="relative" style={{ height: '400px', overflow: 'hidden' }}>
                       {book.image.startsWith('/') ? (
-                        <img
+                        <Image
                           src={book.image}
                           alt={book.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                           style={{
-                            width: '100%',
-                            height: '100%',
                             objectFit: 'cover',
                             objectPosition: 'center',
                           }}
