@@ -1,0 +1,152 @@
+# LASTHUMAN Foundation - Apache Configuration
+# Kompresja gzip, cache headers i optymalizacja
+
+# ========================================
+# 1. KOMPRESJA GZIP/BROTLI
+# ========================================
+
+<IfModule mod_deflate.c>
+    # Włącz kompresję dla typów plików
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/json application/xml application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml application/atom+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/ttf font/otf font/woff font/woff2
+
+    # Nie kompresuj już skompresowanych plików
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|zip|gz|bz2)$ no-gzip dont-vary
+
+    # Dodaj nagłówek Vary dla cache proxy
+    Header append Vary User-Agent env=!dont-vary
+</IfModule>
+
+# Brotli compression (jeśli dostępne - szybsze niż gzip)
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
+    AddOutputFilterByType BROTLI_COMPRESS text/javascript application/javascript application/x-javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json application/xml application/xhtml+xml
+    AddOutputFilterByType BROTLI_COMPRESS application/rss+xml application/atom+xml
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml
+</IfModule>
+
+# ========================================
+# 2. BROWSER CACHING
+# ========================================
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Domyślnie - 1 miesiąc
+    ExpiresDefault "access plus 1 month"
+
+    # HTML - brak cache (zawsze świeże)
+    ExpiresByType text/html "access plus 0 seconds"
+
+    # CSS i JavaScript - 1 rok (zmieniaj nazwy plików przy update)
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType application/x-javascript "access plus 1 year"
+
+    # Obrazy - 1 rok
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+
+    # Fonty - 1 rok
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+
+    # JSON - brak cache
+    ExpiresByType application/json "access plus 0 seconds"
+</IfModule>
+
+# Cache-Control headers (alternatywa dla mod_expires)
+<IfModule mod_headers.c>
+    # HTML - nie cache
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # CSS, JS - cache 1 rok
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Obrazy - cache 1 rok
+    <FilesMatch "\.(jpg|jpeg|png|gif|svg|ico|webp)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+
+    # Fonty - cache 1 rok
+    <FilesMatch "\.(ttf|otf|woff|woff2|eot)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
+
+# ========================================
+# 3. BEZPIECZEŃSTWO
+# ========================================
+
+<IfModule mod_headers.c>
+    # Zabezpieczenie przed XSS
+    Header set X-XSS-Protection "1; mode=block"
+
+    # Zabezpieczenie przed clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+
+    # Wyłącz MIME sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions Policy
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ========================================
+# 4. HTTPS REDIRECT (odkomentuj po uzyskaniu SSL)
+# ========================================
+
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# ========================================
+# 5. ETags - wyłącz dla lepszego cache
+# ========================================
+
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# ========================================
+# 6. UTF-8 Encoding
+# ========================================
+
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .xml .json .rss .atom
+
+# ========================================
+# 7. MIME Types
+# ========================================
+
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType text/javascript .js
+    AddType application/json .json
+    AddType image/svg+xml .svg
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+</IfModule>

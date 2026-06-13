@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section2 Animation Test - Alioth Spec</title>
+  <style>
+    /* ========== RESET ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background: #000;
+      color: #cfcfcf;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ========== ALIOTH CSS VARIABLES ========== */
+    :root {
+      --bg: #000;
+      --fg: #cfcfcf;
+      --step: 1200;
+      --gap: 300;
+      --hold: 1200;
+      --out: 900;
+      --fs: clamp(60px, 14vw, 220px);
+      --lh: 0.82;
+      --track: 0.01em;
+      --cut: -6vw;
+    }
+
+    /* ========== DEBUG PANEL ========== */
+    .debug-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #333;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      z-index: 1000;
+      max-width: 400px;
+    }
+
+    .debug-panel h3 {
+      color: var(--fg);
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .debug-panel p {
+      margin: 5px 0;
+      color: #888;
+    }
+
+    .debug-panel .value {
+      color: #b29e52;
+      font-weight: bold;
+    }
+
+    .debug-panel .cycle-counter {
+      color: #4CAF50;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    .debug-panel button {
+      background: #b29e52;
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .debug-panel button:hover {
+      background: #c9ae63;
+    }
+
+    /* ========== SCENE LAYOUT ========== */
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* ========== WORDS CONTAINER ========== */
+    .words {
+      margin-left: var(--cut);
+      line-height: var(--lh);
+      padding-inline: clamp(12px, 3vw, 48px);
+    }
+
+    /* ========== WORD BASE STYLING + SHIMMER ========== */
+    .word {
+      font-weight: 300;
+      font-size: var(--fs);
+      letter-spacing: var(--track);
+      opacity: 0;
+      transform: translateY(60px);
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent) no-repeat;
+      background-size: 16% 100%;
+      background-position: -40% 0%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      will-change: opacity, transform, background-position;
+      filter: drop-shadow(0 0 60px rgba(0, 0, 0, 0.6));
+    }
+
+    /* ========== KEYFRAMES ========== */
+    @keyframes fadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shimmer {
+      from {
+        background-position: -40% 0%;
+      }
+      to {
+        background-position: 140% 0%;
+      }
+    }
+
+    /* ========== WORD TIMINGS (Alioth spec) ========== */
+    .w1 {
+      animation: fadeSlide calc(var(--step) * 1ms) cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
+        shimmer 2600ms linear forwards;
+      animation-delay: 0ms, 150ms;
+    }
+
+    .w2 {
+      animation: fadeSlide calc(var(--step) * 1ms) cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
+        shimmer 2600ms linear forwards;
+      animation-delay: calc((var(--step) + var(--gap)) * 1ms), calc((var(--step) + var(--gap)) * 1ms + 150ms);
+    }
+
+    .w3 {
+      animation: fadeSlide calc(var(--step) * 1ms) cubic-bezier(0.25, 0.1, 0.25, 1) forwards,
+        shimmer 2600ms linear forwards;
+      animation-delay: calc((2 * var(--step) + 2 * var(--gap)) * 1ms),
+        calc((2 * var(--step) + 2 * var(--gap)) * 1ms + 150ms);
+    }
+
+    /* ========== FADEOUT CLASS ========== */
+    .scene.fadeout .word {
+      transition: opacity calc(var(--out) * 1ms) cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+    }
+
+    /* ========== PLANET BACKGROUND ========== */
+    .earth {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: min(58vw, 980px);
+      height: min(58vw, 980px);
+      opacity: 0.25;
+      mix-blend-mode: screen;
+      filter: contrast(1.02) saturate(1.05);
+      pointer-events: none;
+    }
+
+    .earth::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 35% 35%,
+        rgba(0, 112, 255, 0.3) 0%,
+        rgba(0, 112, 255, 0.15) 30%,
+        rgba(0, 80, 200, 0.08) 50%,
+        transparent 70%
+      );
+    }
+
+    /* ========== ACCESSIBILITY ========== */
+    @media (prefers-reduced-motion: reduce) {
+      .word {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        color: var(--fg);
+        background: none;
+      }
+      .scene.fadeout .word {
+        opacity: 1;
+      }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .scene {
+        min-height: 60vh;
+      }
+      .word {
+        font-size: clamp(40px, 12vw, 120px);
+      }
+      .debug-panel {
+        font-size: 12px;
+        padding: 15px;
+        max-width: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Debug Panel -->
+  <div class="debug-panel" id="debugPanel">
+    <h3>⚙️ Animation Debug</h3>
+    <p>Cycle: <span class="cycle-counter" id="cycleCounter">0</span></p>
+    <p>Current phase: <span class="value" id="currentPhase">-</span></p>
+    <p>Next action in: <span class="value" id="nextAction">-</span></p>
+    <hr style="border-color: #333; margin: 10px 0;">
+    <p>--step: <span class="value">1200ms</span></p>
+    <p>--gap: <span class="value">300ms</span></p>
+    <p>--hold: <span class="value">1200ms</span></p>
+    <p>--out: <span class="value">900ms</span></p>
+    <p>Total cycle: <span class="value" id="totalCycle">6500ms</span></p>
+    <button onclick="toggleDebug()">Hide Debug</button>
+    <button onclick="restartAnimation()">Restart Now</button>
+  </div>
+
+  <!-- Three Pillars Animation -->
+  <main class="scene" id="scene" aria-label="Wizja. Determinacja. Ciągły rozwój.">
+    <!-- Planet Earth background -->
+    <div class="earth"></div>
+
+    <!-- Words - Alioth spec structure -->
+    <div class="words">
+      <div class="word w1">Wizja</div>
+      <div class="word w2">Determinacja</div>
+      <div class="word w3">Ciągły rozwój</div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // Read values from CSS variables - EXACT as spec
+      const root = getComputedStyle(document.documentElement);
+      const n = v => Number(root.getPropertyValue(v).trim()) || 0;
+      const step = n('--step'), gap = n('--gap'), hold = n('--hold'), out = n('--out');
+      const fadeAt = (3 * step) + (2 * gap) + hold;
+      const total = fadeAt + out + 200;
+
+      const scene = document.getElementById('scene');
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Debug variables
+      let cycleCount = 0;
+      let currentPhaseText = 'Starting...';
+      let loopTimeout;
+
+      // Update debug panel
+      function updateDebug(phase) {
+        currentPhaseText = phase;
+        document.getElementById('currentPhase').textContent = phase;
+        document.getElementById('cycleCounter').textContent = cycleCount;
+        document.getElementById('totalCycle').textContent = total + 'ms (' + (total/1000).toFixed(1) + 's)';
+      }
+
+      function restartWords() {
+        document.querySelectorAll('.word').forEach(el => {
+          el.replaceWith(el.cloneNode(true));
+        });
+      }
+
+      function loop() {
+        if (!scene) return;
+
+        cycleCount++;
+        console.log(`🔄 Cycle ${cycleCount} started at ${Date.now()}`);
+        updateDebug('Words entering...');
+
+        scene.classList.remove('fadeout');
+        restartWords();
+
+        // Log timing details
+        console.log(`  w1 (Wizja) enters at: 0ms`);
+        console.log(`  w2 (Determinacja) enters at: ${step + gap}ms`);
+        console.log(`  w3 (Ciągły rozwój) enters at: ${2*step + 2*gap}ms`);
+        console.log(`  All visible until: ${fadeAt}ms`);
+        console.log(`  Fadeout completes at: ${fadeAt + out}ms`);
+        console.log(`  Loop restarts at: ${total}ms`);
+
+        setTimeout(() => {
+          if (!scene) return;
+          updateDebug('Fading out...');
+          console.log(`  💨 Fadeout triggered at ${Date.now()}`);
+          scene.classList.add('fadeout');
+        }, fadeAt);
+
+        loopTimeout = setTimeout(loop, total);
+      }
+
+      // Expose restart function globally
+      window.restartAnimation = function() {
+        clearTimeout(loopTimeout);
+        cycleCount = 0;
+        loop();
+      }
+
+      window.toggleDebug = function() {
+        const panel = document.getElementById('debugPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+
+      // Start animation
+      if (!prefersReduced) {
+        console.log('🎬 Animation starting...');
+        console.log('Timing configuration:', { step, gap, hold, out, fadeAt, total });
+        updateDebug('Initializing...');
+        loop();
+      } else {
+        console.log('⏸️ Animation disabled (prefers-reduced-motion)');
+        updateDebug('Disabled (prefers-reduced-motion)');
+      }
+    })();
+  </script>
+</body>
+</html>

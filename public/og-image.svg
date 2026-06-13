@@ -1,0 +1,30 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#000000"/>
+
+  <!-- Subtle grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a1a" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.3"/>
+
+  <!-- Logo brillQ AI -->
+  <text x="600" y="260" font-family="Arial, sans-serif" font-size="96" fill="#FFFFFF" text-anchor="middle" font-weight="300" letter-spacing="-2">
+    brillQ <tspan fill="#B29E52" font-weight="400">AI</tspan>
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="340" font-family="Arial, sans-serif" font-size="32" fill="#CCCCCC" text-anchor="middle" font-weight="300">
+    Advanced AI &amp; Machine Learning Solutions
+  </text>
+
+  <!-- Decorative line -->
+  <line x1="400" y1="380" x2="800" y2="380" stroke="#B29E52" stroke-width="2" opacity="0.5"/>
+
+  <!-- Tech keywords -->
+  <text x="600" y="450" font-family="Arial, sans-serif" font-size="20" fill="#888888" text-anchor="middle" font-weight="300">
+    LLM • Agentic AI • Deep Learning • Computer Vision • NLP
+  </text>
+</svg>

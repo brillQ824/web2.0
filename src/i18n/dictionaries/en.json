@@ -1,0 +1,23 @@
+{
+  "navigation": {
+    "home": "Home",
+    "competences": "Competences",
+    "projects": "Projects",
+    "about": "About brillQ AI",
+    "contact": "Contact"
+  },
+  "competences": {
+    "title": "AI Competences",
+    "subtitle": "From Machine Learning and Deep Learning, through LLM and Agentic AI, to Computer Vision and NLP - our AI competences cover the full spectrum of artificial intelligence technologies."
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Discover our latest AI and ML deployments - from custom LLM to production-ready Computer Vision systems. We deliver the most ambitious AI projects."
+  },
+  "cta": {
+    "interested": "Interested in our AI competences?",
+    "interested_projects": "Want to implement a similar AI project?",
+    "contact_text": "Contact us to learn more about our capabilities in AI and Machine Learning.",
+    "contact_button": "Contact"
+  }
+}

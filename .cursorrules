@@ -1,0 +1,58 @@
+# Cursor Rules for Alioth Group Website
+
+## General Guidelines
+- Use TypeScript for all new files
+- Follow Next.js 14 App Router conventions
+- Use server components by default, add 'use client' only when needed
+- Prefer Tailwind CSS utility classes over custom CSS
+- Use semantic HTML elements
+
+## Component Guidelines
+- Create small, reusable components
+- Use proper TypeScript types and interfaces
+- Add proper accessibility attributes (aria-labels, roles)
+- Ensure keyboard navigation support
+- Respect prefers-reduced-motion for animations
+
+## Styling Guidelines
+- Use Tailwind utility classes
+- Follow mobile-first responsive design
+- Use the defined color palette from tailwind.config.ts
+- Maintain consistent spacing using Tailwind's spacing scale
+- Use custom classes defined in globals.css when appropriate
+
+## Animation Guidelines
+- Use Framer Motion for complex animations
+- Implement scroll-triggered animations with IntersectionObserver
+- Always check for reduced motion preferences
+- Keep animations subtle and purposeful
+- Use consistent timing and easing functions
+
+## Performance Guidelines
+- Use next/image for all images
+- Implement lazy loading for below-the-fold content
+- Minimize client-side JavaScript
+- Use ISR or SSG where appropriate
+- Optimize bundle size
+
+## SEO Guidelines
+- Add proper meta tags to all pages
+- Include JSON-LD structured data
+- Generate dynamic sitemaps
+- Use semantic HTML structure
+- Implement proper heading hierarchy
+
+## Accessibility Guidelines
+- Ensure keyboard navigation works everywhere
+- Add proper ARIA labels and roles
+- Maintain proper color contrast ratios
+- Provide text alternatives for images
+- Test with screen readers
+
+## Code Organization
+- Group related components in folders
+- Keep utility functions in lib/utils
+- Use barrel exports (index.ts) for cleaner imports
+- Separate business logic from presentation
+- Keep components under 200 lines when possible
+
