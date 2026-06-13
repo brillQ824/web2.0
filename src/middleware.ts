@@ -22,9 +22,9 @@ export function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Redirect to /pl (default locale) for root or missing locale paths
+    // Redirect to the default locale for root or missing-locale paths
     if (pathname === '/') {
-      return NextResponse.redirect(new URL(`/pl`, request.url))
+      return NextResponse.redirect(new URL(`/${i18n.defaultLocale}`, request.url))
     }
 
     return NextResponse.redirect(
