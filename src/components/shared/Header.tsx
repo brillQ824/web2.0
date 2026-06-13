@@ -94,8 +94,11 @@ export default function Header({ lang = 'pl' }: { lang?: Locale }) {
             </motion.div>
           </Link>
 
-          {/* Menu Toggle Button */}
-          <motion.button
+          {/* Right side: language switcher + burger menu */}
+          <div className="flex items-center" style={{ gap: '20px' }}>
+            <LanguageSwitcher currentLang={lang} />
+
+            <motion.button
             type="button"
             className="cursor-pointer relative burger-menu-btn"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -138,7 +141,8 @@ export default function Header({ lang = 'pl' }: { lang?: Locale }) {
                 }}
               />
             </motion.svg>
-          </motion.button>
+            </motion.button>
+          </div>
         </nav>
       </header>
 

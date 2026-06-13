@@ -16,7 +16,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
         href={`/pl${pathnameWithoutLang}`}
         className="transition-colors duration-300 uppercase tracking-wider"
         style={{
-          color: currentLang === 'pl' ? 'var(--color-primary)' : 'var(--color-gray-500)',
+          color: currentLang === 'pl' ? 'var(--color-primary)' : 'var(--color-gray3)',
           fontWeight: currentLang === 'pl' ? 400 : 300,
           letterSpacing: '0.1em',
         }}
@@ -27,7 +27,7 @@ export default function LanguageSwitcher({ currentLang }: { currentLang: Locale 
         href={`/en${pathnameWithoutLang}`}
         className="hover:text-primary transition-colors duration-300 uppercase tracking-wider"
         style={{
-          color: currentLang === 'en' ? 'var(--color-primary)' : 'var(--color-gray-500)',
+          color: currentLang === 'en' ? 'var(--color-primary)' : 'var(--color-gray3)',
           fontWeight: currentLang === 'en' ? 400 : 300,
           letterSpacing: '0.1em',
         }}
