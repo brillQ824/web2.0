@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "../globals.css";
+import HtmlLang from "@/components/shared/HtmlLang";
 import { Suspense } from "react";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
@@ -14,15 +14,6 @@ import ScrollProgressBar from "@/components/shared/ScrollProgressBar";
 import BackToTop from "@/components/shared/BackToTop";
 import { i18n, type Locale } from '@/i18n/config'
 import RecaptchaProvider from '@/components/shared/RecaptchaProvider'
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'fallback',
-  preload: true,
-  adjustFontFallback: true,
-  fallback: ['system-ui', '-apple-system', 'Arial', 'sans-serif'],
-});
 
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }))
@@ -99,25 +90,24 @@ export default function RootLayout({
   params: { lang: Locale };
 }>) {
   return (
-    <html lang={params.lang} className={inter.variable}>
-      <body className="font-sans">
-        <Suspense fallback={null}>
-          <GoogleAnalytics />
-        </Suspense>
-        <OrganizationJsonLd />
-        <ScrollProgressBar />
-        <CursorFollower />
-        <Header lang={params.lang} />
-        <RecaptchaProvider lang={params.lang}>
-          <main id="main-content">
-            {children}
-          </main>
-          <ContactPopup />
-        </RecaptchaProvider>
-        <Footer lang={params.lang} />
-        <BackToTop />
-        <CookieConsent lang={params.lang} />
-      </body>
-    </html>
+    <>
+      <HtmlLang lang={params.lang} />
+      <Suspense fallback={null}>
+        <GoogleAnalytics />
+      </Suspense>
+      <OrganizationJsonLd />
+      <ScrollProgressBar />
+      <CursorFollower />
+      <Header lang={params.lang} />
+      <RecaptchaProvider lang={params.lang}>
+        <main id="main-content">
+          {children}
+        </main>
+        <ContactPopup />
+      </RecaptchaProvider>
+      <Footer lang={params.lang} />
+      <BackToTop />
+      <CookieConsent lang={params.lang} />
+    </>
   );
 }
