@@ -705,34 +705,6 @@ export default function GrupaPage({ params }: { params: { lang: Locale } }) {
                   Architekci systemu, którzy projektują decyzje — nie wykonują zadań
                 </p>
               </div>
-
-              {/* Team Video */}
-              <div className="max-w-4xl mx-auto">
-                <motion.div
-                  className="relative overflow-hidden rounded-2xl"
-                  style={{
-                    border: '1px solid rgba(178, 158, 82, 0.2)',
-                    aspectRatio: '16/9',
-                  }}
-                  whileHover={{
-                    borderColor: 'rgba(178, 158, 82, 0.4)',
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    style={{ display: 'block' }}
-                  >
-                    <source src="/foto/brillQteam.mp4" type="video/mp4" />
-                    <source src="/foto/brillQteam.webm" type="video/webm" />
-                    Twoja przeglądarka nie obsługuje odtwarzania wideo.
-                  </video>
-                </motion.div>
-              </div>
             </div>
           </AnimatedSection>
 
