@@ -298,16 +298,6 @@ Proprietary - Copyright (c) 2026 BrillQ
 
 ---
 
-## ✨ Credits
-
-**Development:**
-- Next.js 14 with App Router
-- Modern web performance best practices
-- Comprehensive SEO optimization
-- Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
-
----
-
 **Status:** 🟢 Production Live
 
 **Last Updated:** 2026-02-02
