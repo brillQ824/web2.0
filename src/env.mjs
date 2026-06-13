@@ -7,9 +7,6 @@ export const env = createEnv({
    * These are only available on the server
    */
   server: {
-    // Sanity (optional - only needed if using CMS)
-    SANITY_API_TOKEN: z.string().min(1).optional(),
-
     // Upstash Redis for rate limiting
     UPSTASH_REDIS_REST_URL: z.string().url().optional(),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
@@ -30,10 +27,7 @@ export const env = createEnv({
    * These are exposed to the browser (must start with NEXT_PUBLIC_)
    */
   client: {
-    NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1).optional(),
-    NEXT_PUBLIC_SANITY_DATASET: z.string().min(1).default("production"),
-    NEXT_PUBLIC_SANITY_API_VERSION: z.string().min(1).default("2024-01-01"),
-    NEXT_PUBLIC_SITE_URL: z.string().url().default("https://brill.ai"),
+    NEXT_PUBLIC_SITE_URL: z.string().url().default("https://brillq.today"),
     NEXT_PUBLIC_GA_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   },
@@ -44,7 +38,6 @@ export const env = createEnv({
    */
   runtimeEnv: {
     // Server
-    SANITY_API_TOKEN: process.env.SANITY_API_TOKEN,
     UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     RECAPTCHA_SECRET_KEY: process.env.RECAPTCHA_SECRET_KEY,
@@ -53,9 +46,6 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
 
     // Client
-    NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-    NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
-    NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,

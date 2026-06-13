@@ -9,14 +9,14 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.google.com https://www.gstatic.com https://www.googletagmanager.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://cdn.sanity.io https://www.googletagmanager.com https://www.google-analytics.com;
+  img-src 'self' blob: data: https://www.googletagmanager.com https://www.google-analytics.com;
   font-src 'self' data:;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'none';
   frame-src https://www.google.com;
-  connect-src 'self' https://cdn.sanity.io https://*.sanity.io https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com;
+  connect-src 'self' https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com;
   upgrade-insecure-requests;
 `
 
@@ -40,12 +40,6 @@ const nextConfig = {
 
   images: {
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'cdn.sanity.io',
-      },
-    ],
   },
 
   // Webpack configuration to reduce polyfills
