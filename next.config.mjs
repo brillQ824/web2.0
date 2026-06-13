@@ -67,22 +67,32 @@ const nextConfig = {
       {
         source: '/pl/insights/:slug*',
         destination: '/pl',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/en/insights/:slug*',
         destination: '/en',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/pl/aktualnosci/:slug*',
         destination: '/pl',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/en/aktualnosci/:slug*',
         destination: '/en',
-        permanent: false,
+        permanent: true,
+      },
+      {
+        source: '/pl/kompetencje/:slug*',
+        destination: '/pl',
+        permanent: true,
+      },
+      {
+        source: '/en/kompetencje/:slug*',
+        destination: '/en',
+        permanent: true,
       },
     ]
   },
